@@ -6,21 +6,28 @@ export async function GET(req: NextRequest) {
   await connectDB();
 
   const searchParams = req.nextUrl.searchParams;
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "20", 10);
+  const pageParam = searchParams.get("page");
+  const limitParam = searchParams.get("limit");
 
-  const skip = (page - 1) * limit;
+  const page = pageParam ? parseInt(pageParam, 10) : 1;
+  const limit = limitParam ? parseInt(limitParam, 10) : null;
+
+  const skip = limit ? (page - 1) * limit : 0;
 
   const total = await Result.countDocuments();
-  const results = await Result.find()
-    .sort({ date: -1 })
-    .skip(skip)
-    .limit(limit);
+
+  let query = Result.find().sort({ date: -1 });
+
+  if (limit) {
+    query = query.skip(skip).limit(limit);
+  }
+
+  const results = await query;
 
   return NextResponse.json({
     data: results,
     page,
-    totalPages: Math.ceil(total / limit),
+    totalPages: limit ? Math.ceil(total / limit) : 1,
     totalResults: total,
   });
 }
