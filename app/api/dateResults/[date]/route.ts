@@ -5,12 +5,12 @@ import moment from "moment-timezone";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { date: string } }
+  { params }: { params: Promise<{ date: string }> }
 ) {
   try {
     await connectDB();
 
-    const { date } = params;
+    const { date } = await params;
 
     if (!date) {
       return NextResponse.json({ error: "Missing date param" }, { status: 400 });
