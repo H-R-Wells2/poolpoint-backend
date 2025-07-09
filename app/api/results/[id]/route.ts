@@ -1,14 +1,16 @@
 import Result from "@/lib/models/result.model";
 import { connectDB } from "@/lib/mongodb";
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
-  const result = await Result.findById(params.id);
+  const { id } = await params;
+
+  const result = await Result.findById(id);
 
   if (!result) {
     return NextResponse.json({ message: "Result not found" }, { status: 404 });
@@ -19,12 +21,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
   const data = await request.json();
 
-  const updated = await Result.findByIdAndUpdate(params.id, data, { new: true });
+  const { id } = await params;
+
+  const updated = await Result.findByIdAndUpdate(id, data, { new: true });
 
   if (!updated) {
     return NextResponse.json({ message: "Result not found for update" }, { status: 404 });
@@ -35,11 +39,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
-  const deleted = await Result.findByIdAndDelete(params.id);
+  const { id } = await params;
+
+  const deleted = await Result.findByIdAndDelete(id);
 
   if (!deleted) {
     return NextResponse.json({ message: "Result not found for deletion" }, { status: 404 });
