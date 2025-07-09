@@ -1,8 +1,11 @@
 import Result from "@/lib/models/result.model";
 import { connectDB } from "@/lib/mongodb";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await connectDB();
 
   const result = await Result.findById(params.id);
@@ -14,9 +17,12 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   return NextResponse.json(result);
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await connectDB();
-  const data = await req.json();
+  const data = await request.json();
 
   const updated = await Result.findByIdAndUpdate(params.id, data, { new: true });
 
@@ -27,7 +33,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   return NextResponse.json(updated);
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await connectDB();
 
   const deleted = await Result.findByIdAndDelete(params.id);
