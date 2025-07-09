@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PoolPoint Backend
 
-## Getting Started
+PoolPoint is a smart backend system for a mobile snooker tracking app. It supports real-time game tracking, cost calculation, player management, and session summaries. Built using Next.js 15 (App Router) and MongoDB, this backend provides structured API endpoints for efficient data handling.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech Stack
+
+* **Framework:** Next.js 15 (App Router)
+* **Database:** MongoDB (via Mongoose)
+* **API:** Route Handlers (`app/api/`)
+* **Language:** TypeScript
+
+---
+
+## Features
+
+* RESTful API endpoints for:
+
+  * Creating and fetching game results
+  * Updating and deleting result records
+  * Handling player scores, cost splits, and metadata
+* Pagination support for large data sets
+* Clean Mongoose schema for flexible result storage
+
+---
+
+## Project Structure
+
+```
+poolpoint-backend/
+├── app/
+│   └── api/
+│       └── results/
+│           ├── [id]/
+│           │   └── route.ts      (PUT & DELETE handlers for individual result)
+│           └── route.ts          (GET & POST handlers for results collection)
+├── lib/
+│   ├── mongodb.ts                (MongoDB connection utility)
+│   └── models/
+│       └── result.model.ts       (Mongoose schema for game results)
+├── types/                        (TypeScript interfaces - optional)
+├── .env.local                    (Environment variables - MongoDB URI)
+├── README.md
+└── package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup Instructions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Clone the repository**
 
-## Learn More
+   ```bash
+   git clone https://github.com/yourusername/poolpoint-backend.git
+   cd poolpoint-backend
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Install dependencies**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **Configure Environment Variables**
+   Create a `.env.local` file in the root directory with the following content:
 
-## Deploy on Vercel
+   ```env
+   MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/poolpoint?retryWrites=true&w=majority
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **Run the development server**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   npm run dev
+   ```
+
+The API will be available at:
+`http://localhost:3000/api/results`
+
+---
+
+## API Endpoints
+
+* **GET** `/api/results`
+  Returns a paginated list of game results.
+
+* **POST** `/api/results`
+  Creates a new game result. Example request body:
+
+  ```json
+  {
+    "players": [
+      {
+        "playerName": "Alice",
+        "score": 120,
+        "amount": 50,
+        "isTeamWon": true
+      },
+      {
+        "playerName": "Bob",
+        "score": 100,
+        "amount": 30,
+        "isTeamWon": false
+      }
+    ]
+  }
+  ```
+
+* **PUT** `/api/results/:id`
+  Updates a game result by its ID.
+
+* **DELETE** `/api/results/:id`
+  Deletes a game result by its ID.
+
+---
+
+## Future Enhancements (Post-MVP)
+
+* Player authentication and game ownership
+* Filtering results by player or game mode
+* Admin dashboard or analytics API
+* Integration with Firebase or Supabase for cloud sync
+
+---
+
+## Author
+
+Built by the PoolPoint Team
+Contact: [kadamshubham10246@gmail.com](mailto:kadamshubham10246@gmail.com) 
