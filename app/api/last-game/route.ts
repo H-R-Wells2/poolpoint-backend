@@ -1,7 +1,13 @@
-// app/api/summary/last-game/route.ts
 import { connectDB } from "@/lib/mongodb";
 import Result from "@/lib/models/result.model";
 import { NextResponse } from "next/server";
+
+type Player = {
+  playerName: string;
+  score: number;
+  amount?: number;
+  isTeamWon?: boolean;
+};
 
 export async function GET() {
   await connectDB();
@@ -13,8 +19,23 @@ export async function GET() {
       return NextResponse.json({ message: "No games found" }, { status: 404 });
     }
 
-    const sortedPlayers = [...lastGame.players].sort((a, b) => b.score - a.score);
-    const winner = sortedPlayers[0]?.playerName || "";
+    let winner: string | string[] = "";
+
+    const players: Player[] = lastGame.players as Player[];
+
+    const isTeamGame = players.some((p: Player) => typeof p.isTeamWon === "boolean");
+
+    if (isTeamGame) {
+      const teamWinners = players
+        .filter((p: Player) => p.isTeamWon === true)
+        .map((p: Player) => p.playerName);
+      winner = teamWinners;
+    } else {
+      const sortedPlayers = [...players].sort(
+        (a: Player, b: Player) => b.score - a.score
+      );
+      winner = sortedPlayers[0]?.playerName || "";
+    }
 
     return NextResponse.json({
       game: {

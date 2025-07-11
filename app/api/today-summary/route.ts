@@ -1,4 +1,3 @@
-// app/api/summary/today/route.ts
 import { connectDB } from "@/lib/mongodb";
 import Result from "@/lib/models/result.model";
 import { NextResponse } from "next/server";
